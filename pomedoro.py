@@ -10,8 +10,8 @@ WORK_MIN = 10
 SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
 rep = 0
-
-
+CHECK_MARK = "✔"
+check_mark_text = ""
 # ---------------------------- TIMER RESET ------------------------------- #
 def timer_reset():
     global rep
@@ -21,6 +21,7 @@ def timer_reset():
 # ---------------------------- TIMER MECHANISM ------------------------------- #
 def time_start():
     global rep
+    global check_mark_text
     rep += 1
     work = WORK_MIN * 1
     short_break = SHORT_BREAK_MIN * 1
@@ -32,10 +33,12 @@ def time_start():
         rep = 0
     elif rep %2 == 0:
         count_down(short_break)
+        check_mark_text = check_mark_text + CHECK_MARK
+        check_label.config(text=check_mark_text)
         title_label.config(text="break", bg=YELLOW, fg=PINK, font=(FONT_NAME, 35, "bold"))
     else:
         count_down(work)
-        title_label.config(text="work", bg=YELLOW, fg=GREEN, font=(FONT_NAME, 35, "bold"))
+        title_label.config(text="work", bg=YELLOW, fg=GREEN, font=(FONT_NAME, 35, "bold"))    
 
 # ---------------------------- COUNTDOWN MECHANISM ------------------------------- #
 def count_down(count):
@@ -47,7 +50,7 @@ def count_down(count):
         canvas.itemconfig(time_text, text=timer)
         buttun_start.config(state="disabled")
     if count == 0:
-        check_label.config(text="✔")
+        
         buttun_start.config(state="active", bg=GREEN)
         time_start()
     if count != 0:
