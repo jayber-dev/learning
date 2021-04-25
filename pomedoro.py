@@ -12,11 +12,19 @@ LONG_BREAK_MIN = 20
 rep = 0
 CHECK_MARK = "✔"
 check_mark_text = ""
+timer = None
+
+
 # ---------------------------- TIMER RESET ------------------------------- #
 def timer_reset():
     global rep
+    global check_mark_text
+    check_mark_text = ""
     rep = 0
+    buttun_start.config(state="active",bg=GREEN)
     canvas.itemconfig(time_text, text="25:00")
+    check_label.config(text=check_mark_text)
+    window.after_cancel(timer)
 
 # ---------------------------- TIMER MECHANISM ------------------------------- #
 def time_start():
@@ -27,22 +35,26 @@ def time_start():
     short_break = SHORT_BREAK_MIN * 1
     long_break = LONG_BREAK_MIN * 1
 
-    if rep %8 == 0:
+    if rep % 8 == 0:
         count_down(long_break)
-        title_label.config(text="break", bg=YELLOW, fg=RED, font=(FONT_NAME, 35, "bold"))
-        rep = 0
-    elif rep %2 == 0:
-        count_down(short_break)
         check_mark_text = check_mark_text + CHECK_MARK
         check_label.config(text=check_mark_text)
+        title_label.config(text="break", bg=YELLOW, fg=RED, font=(FONT_NAME, 35, "bold"))
+        rep = 0
+    elif rep % 2 == 0:
+        check_mark_text = check_mark_text + CHECK_MARK
+        check_label.config(text=check_mark_text)
+        count_down(short_break)
         title_label.config(text="break", bg=YELLOW, fg=PINK, font=(FONT_NAME, 35, "bold"))
     else:
         count_down(work)
-        title_label.config(text="work", bg=YELLOW, fg=GREEN, font=(FONT_NAME, 35, "bold"))    
+        title_label.config(text="work", bg=YELLOW, fg=GREEN, font=(FONT_NAME, 35, "bold"))
 
-# ---------------------------- COUNTDOWN MECHANISM ------------------------------- #
+    # ---------------------------- COUNTDOWN MECHANISM ------------------------------- #
+
+
 def count_down(count):
-    
+    global timer
 
     if count >= 0:
         mins, secs = divmod(count, 60)
@@ -50,12 +62,10 @@ def count_down(count):
         canvas.itemconfig(time_text, text=timer)
         buttun_start.config(state="disabled")
     if count == 0:
-        
         buttun_start.config(state="active", bg=GREEN)
         time_start()
     if count != 0:
-        window.after(1000, count_down, count - 1)
-
+        timer = window.after(200, count_down, count - 1)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -73,7 +83,7 @@ time_text = canvas.create_text(150, 150, text="25:00", fill="white", font=(FONT_
 title_label = Label(text="timer", bg=YELLOW, fg=GREEN, font=(FONT_NAME, 35, "bold"))
 title_label.grid(row=0, column=1)
 
-check_label = Label(text="", bg=YELLOW, fg=GREEN, font=(FONT_NAME, 35, "bold"))
+check_label = Label(text="", bg=YELLOW, fg=GREEN, font=(FONT_NAME, 14, "bold"))
 check_label.grid(row=2, column=1)
 
 # ------------------- buttuns --------------------- #
